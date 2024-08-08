@@ -7,7 +7,4 @@ type UserRepository interface {
 	GetUserByPhone(phone string) (*entity.User, error)
 	GetUserByID(userID string) (*entity.User, error)
 	UpdateUser(user *entity.User) error
-	GetUserBalance(userID string) (float64, error)
-	UpdateUserBalance(userID string, balance float64) error
-	CreateUserBalance(userID string) error
 }

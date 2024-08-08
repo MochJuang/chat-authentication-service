@@ -11,10 +11,4 @@ type User struct {
 	Pin         string `gorm:"not null"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Balance     UserBalance `gorm:"foreignKey:UserID"`
-}
-
-type UserBalance struct {
-	UserID  string `gorm:"primaryKey"`
-	Balance float64
 }

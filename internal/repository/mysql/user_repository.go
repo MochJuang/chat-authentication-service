@@ -1,9 +1,10 @@
 package mysql
 
 import (
-	"gorm.io/gorm"
 	"hireplus-project/internal/entity"
 	"hireplus-project/internal/repository"
+
+	"gorm.io/gorm"
 )
 
 type userRepository struct {
@@ -34,30 +35,6 @@ func (r *userRepository) GetUserByID(userID string) (*entity.User, error) {
 	return &user, nil
 }
 
-func (r *userRepository) CreateUserBalance(userID string) error {
-	balance := &entity.UserBalance{
-		UserID:  userID,
-		Balance: 0.0,
-	}
-	return r.db.Create(balance).Error
-}
-
 func (r *userRepository) UpdateUser(user *entity.User) error {
 	return r.db.Save(user).Error
-}
-
-func (r *userRepository) GetUserBalance(userID string) (float64, error) {
-	var balance entity.UserBalance
-	if err := r.db.Where("user_id = ?", userID).First(&balance).Error; err != nil {
-		return 0, err
-	}
-	return balance.Balance, nil
-}
-
-func (r *userRepository) UpdateUserBalance(userID string, balance float64) error {
-	userBalance := &entity.UserBalance{
-		UserID:  userID,
-		Balance: balance,
-	}
-	return r.db.Save(userBalance).Error
 }
