@@ -1,11 +1,11 @@
 package route
 
 import (
-	"notification-service/internal/config"
-	httpdelivery "notification-service/internal/delivery/http"
-	middleware "notification-service/internal/delivery/http/midlleware"
-	"notification-service/internal/repository/postgresql"
-	"notification-service/internal/service"
+	"authentication-service/internal/config"
+	httpdelivery "authentication-service/internal/delivery/http"
+	middleware "authentication-service/internal/delivery/http/midlleware"
+	"authentication-service/internal/repository/postgresql"
+	"authentication-service/internal/service"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,9 +1,9 @@
 package controller
 
 import (
-	e "notification-service/internal/exception"
-	"notification-service/internal/model"
-	"notification-service/internal/service"
+	e "authentication-service/internal/exception"
+	"authentication-service/internal/model"
+	"authentication-service/internal/service"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"

@@ -1,6 +1,6 @@
 package repository
 
-import "notification-service/internal/entity"
+import "authentication-service/internal/entity"
 
 type UserRepository interface {
 	CreateUser(user *entity.User) error

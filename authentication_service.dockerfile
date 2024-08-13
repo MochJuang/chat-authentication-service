@@ -5,6 +5,6 @@ FROM alpine:latest
 
 RUN mkdir /app
 
-COPY notificationService /app
+COPY AuthenticationService /app
 
-CMD ["/app/notificationService"]
+CMD ["/app/AuthenticationService"]

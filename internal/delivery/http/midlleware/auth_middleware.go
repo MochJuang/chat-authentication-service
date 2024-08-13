@@ -3,9 +3,9 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"notification-service/internal/config"
-	e "notification-service/internal/exception"
-	"notification-service/internal/utils"
+	"authentication-service/internal/config"
+	e "authentication-service/internal/exception"
+	"authentication-service/internal/utils"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"

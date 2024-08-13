@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	e "notification-service/internal/exception"
+	e "authentication-service/internal/exception"
 
 	"github.com/gofiber/fiber/v2"
 )

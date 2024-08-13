@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"notification-service/internal/config"
-	"notification-service/internal/delivery/http/route"
-	"notification-service/internal/repository/postgresql"
+	"authentication-service/internal/config"
+	"authentication-service/internal/delivery/http/route"
+	"authentication-service/internal/repository/postgresql"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"

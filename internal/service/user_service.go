@@ -2,12 +2,12 @@ package service
 
 import (
 	"fmt"
-	"notification-service/internal/config"
-	"notification-service/internal/entity"
-	e "notification-service/internal/exception"
-	"notification-service/internal/model"
-	"notification-service/internal/repository"
-	"notification-service/internal/utils"
+	"authentication-service/internal/config"
+	"authentication-service/internal/entity"
+	e "authentication-service/internal/exception"
+	"authentication-service/internal/model"
+	"authentication-service/internal/repository"
+	"authentication-service/internal/utils"
 )
 
 type UserService interface {

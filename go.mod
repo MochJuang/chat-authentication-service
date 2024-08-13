@@ -1,4 +1,4 @@
-module notification-service
+module authentication-service
 
 go 1.22
 
