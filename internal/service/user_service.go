@@ -1,18 +1,18 @@
 package service
 
 import (
-	"fmt"
 	"authentication-service/internal/config"
 	"authentication-service/internal/entity"
 	e "authentication-service/internal/exception"
 	"authentication-service/internal/model"
 	"authentication-service/internal/repository"
 	"authentication-service/internal/utils"
+	"fmt"
 )
 
 type UserService interface {
 	Register(request model.UserRegisterRequest) (*model.UserResponse, error)
-	GetUserByID(userID int) (*entity.User, error)
+	GetUserByID(userID int) (*model.UserResponse, error)
 }
 
 type userService struct {
@@ -52,7 +52,7 @@ func (s *userService) Register(request model.UserRegisterRequest) (*model.UserRe
 	return &response, nil
 }
 
-func (s *userService) GetUserByID(userID int) (*entity.User, error) {
+func (s *userService) GetUserByID(userID int) (*model.UserResponse, error) {
 	if userID == 0 {
 		return nil, e.Validation(fmt.Errorf("userID must be greater than 0"))
 	}
@@ -61,6 +61,7 @@ func (s *userService) GetUserByID(userID int) (*entity.User, error) {
 	if err != nil {
 		return nil, e.NotFound("user not found")
 	}
+	response := model.ToUserResponse(*user)
 
-	return user, nil
+	return &response, nil
 }
