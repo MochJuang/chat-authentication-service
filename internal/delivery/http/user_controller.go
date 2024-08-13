@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"fmt"
+	e "notification-service/internal/exception"
+	"notification-service/internal/model"
+	"notification-service/internal/service"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
-	e "hireplus-project/internal/exception"
-	"hireplus-project/internal/model"
-	"hireplus-project/internal/service"
 )
 
 type UserController struct {
@@ -22,40 +23,29 @@ func (h *UserController) Register(c *fiber.Ctx) error {
 		return e.Validation(err)
 	}
 
-	user, err := h.userService.Register(req.FirstName, req.LastName, req.PhoneNumber, req.Address, req.Pin)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	return c.JSON(fiber.Map{"status": "SUCCESS", "result": user})
-}
-
-func (h *UserController) Login(c *fiber.Ctx) error {
-	var req model.UserLoginRequest
-	if err := c.BodyParser(&req); err != nil {
-		return e.Validation(err)
-	}
-
-	accessToken, refreshToken, err := h.userService.Login(req.PhoneNumber, req.Pin)
+	user, err := h.userService.Register(req)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(fiber.Map{"status": "SUCCESS", "access_token": accessToken, "refresh_token": refreshToken})
+	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
-func (h *UserController) UpdateProfile(c *fiber.Ctx) error {
-	userID := c.Locals("user_id").(string)
-	var req model.UpdateProfileRequest
-	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": err.Error()})
-	}
+func (h *UserController) GetUserByID(c *fiber.Ctx) error {
+	// Retrieve user ID from the request parameters
+	userID := c.Params("id")
 
-	user, err := h.userService.UpdateProfile(userID, req.FirstName, req.LastName, req.Address)
+	userId, err := strconv.Atoi(userID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
+		return e.Internal(err)
 	}
 
-	return c.JSON(fiber.Map{"status": "SUCCESS", "result": user})
+	// Fetch user details from the server
+	response, err := h.userService.GetUserByID(userId)
+	if err != nil {
+		return err
+	}
+
+	// Return user details in the response
+	return c.JSON(response)
 }

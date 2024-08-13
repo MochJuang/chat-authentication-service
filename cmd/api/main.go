@@ -1,13 +1,13 @@
 package main
 
 import (
+	"log"
+	"notification-service/internal/config"
+	"notification-service/internal/delivery/http/route"
+	"notification-service/internal/repository/postgresql"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"hireplus-project/internal/config"
-	"hireplus-project/internal/delivery/http/route"
-	"hireplus-project/internal/repository/mysql"
-	"hireplus-project/internal/service"
-	"log"
 )
 
 func main() {
@@ -16,26 +16,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)
 	}
+	log.Println(cfg)
 
-	// Initialize database
-	db, err := mysql.NewConnector(cfg)
+	db, err := postgresql.NewConnector(cfg)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
+	cfg.DB = db
 
-	// Perform database migration
-	err = mysql.Migrate(db)
+	err = postgresql.Migrate(db)
 	if err != nil {
 		log.Fatalf("Could not migrate database: %v", err)
 	}
-
-	// Initialize repositories
-	userRepo := mysql.NewUserRepository(db)
-	transactionRepo := mysql.NewTransactionRepository(db)
-
-	// Initialize services
-	userService := service.NewUserService(userRepo, cfg)
-	transactionService := service.NewTransactionService(transactionRepo, userRepo)
 
 	// Initialize Fiber app
 	app := fiber.New()
@@ -43,9 +35,7 @@ func main() {
 	app.Use(logger.New())
 
 	// Setup routes
-	route.SetupRoutes(app, userService, transactionService, cfg)
-
-	// Setup error handler middleware
+	route.SetupRoutes(app, cfg)
 
 	// Start server
 	log.Fatal(app.Listen(cfg.ServerAddress))

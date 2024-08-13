@@ -3,11 +3,12 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"hireplus-project/internal/config"
-	e "hireplus-project/internal/exception"
-	"hireplus-project/internal/utils"
+	"notification-service/internal/config"
+	e "notification-service/internal/exception"
+	"notification-service/internal/utils"
 	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func AuthMiddleware(cfg config.Config) fiber.Handler {

@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	e "notification-service/internal/exception"
+
 	"github.com/gofiber/fiber/v2"
-	e "hireplus-project/internal/exception"
 )
 
 func ErrorHandlerMiddleware(c *fiber.Ctx) error {

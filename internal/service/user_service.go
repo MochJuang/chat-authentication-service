@@ -1,21 +1,18 @@
 package service
 
 import (
-	"errors"
-	"hireplus-project/internal/config"
-	"hireplus-project/internal/entity"
-	"hireplus-project/internal/repository"
-	"hireplus-project/internal/utils"
-	"time"
-
-	e "hireplus-project/internal/exception"
-
-	"github.com/google/uuid"
+	"fmt"
+	"notification-service/internal/config"
+	"notification-service/internal/entity"
+	e "notification-service/internal/exception"
+	"notification-service/internal/model"
+	"notification-service/internal/repository"
+	"notification-service/internal/utils"
 )
 
 type UserService interface {
-	Register(firstName, lastName, phone, address, pin string) (*entity.User, error)
-	Login(phone, pin string) (string, string, error)
+	Register(request model.UserRegisterRequest) (*model.UserResponse, error)
+	GetUserByID(userID int) (*entity.User, error)
 }
 
 type userService struct {
@@ -24,51 +21,46 @@ type userService struct {
 }
 
 func NewUserService(userRepo repository.UserRepository, cfg config.Config) UserService {
-	return &userService{userRepo, cfg}
+	return &userService{userRepo: userRepo, config: cfg}
 }
 
-func (s *userService) Register(firstName, lastName, phone, address, pin string) (*entity.User, error) {
-	user := &entity.User{
-		ID:          uuid.New().String(),
-		FirstName:   firstName,
-		LastName:    lastName,
-		PhoneNumber: phone,
-		Address:     address,
-		Pin:         pin,
-		CreatedAt:   time.Now(),
+func (s *userService) Register(request model.UserRegisterRequest) (*model.UserResponse, error) {
+	var err error
+	err = utils.Validate(request)
+	if err != nil {
+		return nil, err
 	}
-	if err := s.userRepo.CreateUser(user); err != nil {
+
+	password, err := utils.HashPassword(request.Password)
+	if err != nil {
 		return nil, e.Internal(err)
 	}
 
-	if err := s.userRepo.CreateUserBalance(user.ID); err != nil {
+	var user = entity.User{
+		Username: request.Username,
+		Email:    request.Email,
+		Password: password,
+	}
+
+	err = s.userRepo.CreateUser(&user)
+	if err != nil {
 		return nil, e.Internal(err)
+	}
+
+	response := model.ToUserResponse(user)
+
+	return &response, nil
+}
+
+func (s *userService) GetUserByID(userID int) (*entity.User, error) {
+	if userID == 0 {
+		return nil, e.Validation(fmt.Errorf("userID must be greater than 0"))
+	}
+
+	user, err := s.userRepo.GetUserByID(userID)
+	if err != nil {
+		return nil, e.NotFound("user not found")
 	}
 
 	return user, nil
-}
-
-func (s *userService) Login(phone, pin string) (string, string, error) {
-	user, err := s.userRepo.GetUserByPhone(phone)
-	if err != nil {
-		return "", "", e.Validation(errors.New("phone number or PIN is incorrect"))
-	}
-
-	if user.Pin != pin {
-		return "", "", e.Validation(errors.New("phone number or PIN is incorrect"))
-	}
-
-	jwtKey := s.config.JWTSecret
-
-	accessToken, err := utils.GenerateToken(user.ID, jwtKey)
-	if err != nil {
-		return "", "", e.Internal(err)
-	}
-
-	refreshToken, err := utils.GenerateToken(user.ID, jwtKey)
-	if err != nil {
-		return "", "", e.Internal(err)
-	}
-
-	return accessToken, refreshToken, nil
 }
