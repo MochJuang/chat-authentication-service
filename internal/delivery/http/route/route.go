@@ -20,6 +20,7 @@ func SetupRoutes(app *fiber.App, cfg config.Config) {
 
 	// Public routes
 	app.Post("/users", userController.Register)
-	app.Get("/users/:id", userController.GetUserByID)
-
+	app.Get("/users/:id", middleware.AuthMiddleware(cfg), userController.GetUserByID)
+	app.Post("/users/login", userController.Login)
+	app.Post("/users/refresh", userController.RefreshToken)
 }

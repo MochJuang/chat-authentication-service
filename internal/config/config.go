@@ -1,11 +1,8 @@
 package config
 
 import (
-	"gorm.io/gorm"
-	"os"
-
-	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 type Config struct {
@@ -14,6 +11,7 @@ type Config struct {
 	DBSource      string `mapstructure:"DB_SOURCE"`
 	JWTSecret     string `mapstructure:"JWT_SECRET"`
 	DB            *gorm.DB
+	JwtExpiration int `mapstructure:"JWT_EXPIRATION"`
 }
 
 func LoadConfig() (Config, error) {
@@ -27,16 +25,7 @@ func LoadConfig() (Config, error) {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return cfg, err
-		}
-
-		godotenv.Load()
-
-		viper.SetDefault("SERVER_ADDRESS", os.Getenv("SERVER_ADDRESS"))
-		viper.SetDefault("DB_DRIVER", os.Getenv("DB_DRIVER"))
-		viper.SetDefault("DB_SOURCE", os.Getenv("DB_SOURCE"))
-		viper.SetDefault("JWT_SECRET", os.Getenv("JWT_SECRET"))
+		return cfg, err
 	}
 
 	err = viper.Unmarshal(&cfg)

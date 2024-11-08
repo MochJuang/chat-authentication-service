@@ -30,3 +30,11 @@ func (r *userRepository) GetUserByID(userID int) (*entity.User, error) {
 func (r *userRepository) UpdateUser(user *entity.User) error {
 	return r.db.Save(user).Error
 }
+
+func (r *userRepository) GetUserByUsername(username string) (*entity.User, error) {
+	var user entity.User
+	if err := r.db.Where("username = ?", username).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

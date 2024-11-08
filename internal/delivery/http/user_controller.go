@@ -20,7 +20,7 @@ func NewUserController(userService service.UserService) *UserController {
 func (h *UserController) Register(c *fiber.Ctx) error {
 	var req model.UserRegisterRequest
 	if err := c.BodyParser(&req); err != nil {
-		return e.Validation(err)
+		return e.BadRequest(err)
 	}
 
 	user, err := h.userService.Register(req)
@@ -48,4 +48,32 @@ func (h *UserController) GetUserByID(c *fiber.Ctx) error {
 
 	// Return user details in the response
 	return c.JSON(response)
+}
+
+func (h *UserController) Login(c *fiber.Ctx) error {
+	var req model.UserLoginRequest
+	if err := c.BodyParser(&req); err != nil {
+		return e.BadRequest(err)
+	}
+
+	user, err := h.userService.Login(req)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(user)
+}
+
+func (h *UserController) RefreshToken(c *fiber.Ctx) error {
+	var req model.RefreshTokenRequest
+	if err := c.BodyParser(&req); err != nil {
+		return e.BadRequest(err)
+	}
+
+	user, err := h.userService.RefreshToken(req)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(user)
 }

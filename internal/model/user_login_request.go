@@ -1,6 +1,10 @@
 package model
 
 type UserLoginRequest struct {
-	PhoneNumber string `json:"phone_number"`
-	Pin         string `json:"pin"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
 }
