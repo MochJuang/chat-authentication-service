@@ -14,7 +14,7 @@ import (
 
 type UserService interface {
 	Register(request model.UserRegisterRequest) (*model.AuthenticationResponse, error)
-	GetUserByID(userID int) (*model.UserResponse, error)
+	GetUserByUuid(uuid string) (*model.UserResponse, error)
 	Login(request model.UserLoginRequest) (*model.AuthenticationResponse, error)
 	RefreshToken(request model.RefreshTokenRequest) (*model.AuthenticationResponse, error)
 }
@@ -112,12 +112,12 @@ func (s *userService) RefreshToken(request model.RefreshTokenRequest) (*model.Au
 	return response, nil
 }
 
-func (s *userService) GetUserByID(userID int) (*model.UserResponse, error) {
-	if userID == 0 {
-		return nil, e.BadRequest(fmt.Errorf("userID must be greater than 0"))
+func (s *userService) GetUserByUuid(userUuid string) (*model.UserResponse, error) {
+	if userUuid == "" {
+		return nil, e.BadRequest("userID is required")
 	}
 
-	user, err := s.userRepo.GetUserByID(userID)
+	user, err := s.userRepo.GetUserByUuid(userUuid)
 	if err != nil {
 		return nil, e.NotFound("user not found")
 	}

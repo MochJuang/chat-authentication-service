@@ -4,8 +4,6 @@ import (
 	e "authentication-service/internal/exception"
 	"authentication-service/internal/model"
 	"authentication-service/internal/service"
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -33,15 +31,10 @@ func (h *UserController) Register(c *fiber.Ctx) error {
 
 func (h *UserController) GetUserByID(c *fiber.Ctx) error {
 	// Retrieve user ID from the request parameters
-	userID := c.Params("id")
-
-	userId, err := strconv.Atoi(userID)
-	if err != nil {
-		return e.Internal(err)
-	}
+	userID := c.Params("uuid")
 
 	// Fetch user details from the server
-	response, err := h.userService.GetUserByID(userId)
+	response, err := h.userService.GetUserByUuid(userID)
 	if err != nil {
 		return err
 	}
